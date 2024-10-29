@@ -40,6 +40,25 @@ class Solution:
 
 class Solution2:
     def minCostConnectPoints(self, points: List[List[int]]) -> int:
+        def find(parent, i):
+            if parent[i] != i:
+                parent[i] = find(parent, parent[i])
+            return parent[i]
+
+        def union(parent, rank, x, y):
+            rootX = find(parent, x)
+            rootY = find(parent, y)
+            if rootX != rootY:
+                if rank[rootX] > rank[rootY]:
+                    parent[rootY] = rootX
+                elif rank[rootX] < rank[rootY]:
+                    parent[rootX] = rootY
+                else:
+                    parent[rootY] = rootX
+                    rank[rootX] += 1
+                return True
+            return False
+
         n = len(points)
         edges = []
         for i in range(n):
@@ -51,11 +70,9 @@ class Solution2:
         rank = [0] * n
         cost = 0
         for distance, i, j in edges:
-            if self.union(i, j, parent, rank):
+            if union(parent, rank, i, j):
                 cost += distance
         return cost
 
-# Time Complexity: O(n^2 log n) where n is the number of points.
-# The algorithm calculates the distance between all pairs of points, resulting in O(n^2) comparisons.
-# Space Complexity: O(n) where n is the number of points.
-# The algorithm uses parent and rank arrays to implement the union-find algorithm, which requires O(n) space.
+# Time Complexity:
+# Space Complexity:
